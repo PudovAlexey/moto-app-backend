@@ -1,0 +1,31 @@
+model User {
+  id         String    @id @default(uuid())
+  name       String
+  email      String    @unique
+  password   String
+  surname    String
+  patronymic String?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  avatar_url String?
+  
+  // Отношения
+  chats      ChatParticipant[]
+  messages   ChatMessage[]
+
+   contacts    Contact[] @relation("UserContacts")
+  
+  @@map("users")
+}
+
+
+model Contact {
+      id         String    @id @default(uuid())
+    owner_id     String         // ID пользователя, который добавил контакт
+    contact_id   String         // ID пользователя, который добавлен в контакты
+
+    owner        User           @relation("UserContacts", fields: [owner_id], references: [id], onDelete: Cascade)
+    contact      User           @relation("UserContactOf", fields: [contact_id], references: [id], onDelete: Cascade)
+
+    @@map("contact")
+}

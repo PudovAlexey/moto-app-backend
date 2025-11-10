@@ -1,0 +1,97 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input AddToContactInput {
+  """user_id"""
+  user_id: String!
+}
+
+type AddToContactResponse {
+  """detail"""
+  detail: String!
+}
+
+input CreateChatInput {
+  """participant_id"""
+  participant_id: String!
+
+  """user_id"""
+  user_id: String!
+}
+
+type CreateChatResponse {
+  """id"""
+  id: String!
+}
+
+input GetMyContactInput {
+  """is_success"""
+  search_field: String
+}
+
+type GetMyContactResponse {
+  """id"""
+  id: String!
+
+  """"""
+  isMyContact: Boolean!
+
+  """name"""
+  name: String!
+}
+
+type Mutation {
+  addToContacts(contact: AddToContactInput!): AddToContactResponse!
+  createChat(chat_data: CreateChatInput!): CreateChatResponse!
+  register(input: RegisterInput!): RegisterResponse!
+  sendMessage(message_data: SendMessageInput!): SendMessageResponse!
+}
+
+type Query {
+  getContact(search: GetMyContactInput!): [GetMyContactResponse!]!
+}
+
+input RegisterInput {
+  """Avatar URL"""
+  avatar_url: String
+
+  """User email (login)"""
+  email: String!
+
+  """User name"""
+  name: String!
+
+  """User password"""
+  password: String!
+
+  """User patronymic"""
+  patronymic: String
+
+  """User surname"""
+  surname: String!
+}
+
+type RegisterResponse {
+  """description"""
+  id: String!
+}
+
+input SendMessageInput {
+  """"""
+  adds: [String!]
+
+  """id"""
+  chat_id: String
+
+  """"""
+  message: String!
+
+  """participant_id"""
+  participant_id: String!
+}
+
+type SendMessageResponse {
+  """id"""
+  id: String!
+}

@@ -1,0 +1,150 @@
+generator client {
+  provider = "prisma-client-js"
+  // previewFeatures = ["prismaSchemaFolder"]
+}
+
+datasource db {
+  provider = "postgresql"  // Или твоя БД
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String    @id @default(uuid())
+  name       String
+  email      String    @unique
+  password   String
+  surname    String
+  patronymic String?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  avatar_url String?
+  
+  // Отношения
+  chats      ChatParticipant[]
+  messages   ChatMessage[]
+
+   contacts    Contact[] @relation("UserContacts")
+  
+  @@map("users")
+}
+
+
+model Contact {
+      id         String    @id @default(uuid())
+    owner_id     String         // ID пользователя, который добавил контакт
+    contact_id   String         // ID пользователя, который добавлен в контакты
+
+    owner        User           @relation("UserContacts", fields: [owner_id], references: [id], onDelete: Cascade)
+
+    @@map("contact")
+}
+
+model Chat {
+  id          String    @id @default(uuid())
+  name        String?
+  type        ChatType  @default(PRIVATE)
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  
+  // Отношения
+  participants ChatParticipant[]
+  messages     ChatMessage[]
+  adds         MessageAdd[]
+  
+  @@map("chats")
+}
+
+model ChatParticipant {
+  id        String   @id @default(uuid())
+  user_id   String
+  chat_id   String
+  joined_at DateTime @default(now())
+  role      ChatRole @default(MEMBER)
+  
+  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  chat      Chat     @relation(fields: [chat_id], references: [id], onDelete: Cascade)
+  
+  @@unique([user_id, chat_id])
+  @@map("chat_participants")
+}
+
+model ChatMessage {
+  id               String       @id @default(uuid())
+  message          String
+  chat_id          String
+  user_id          String
+  reply_to_id      String?
+  created_at       DateTime     @default(now())
+  updated_at       DateTime     @updatedAt
+  message_type     MessageType  @default(TEXT)
+  
+  // Отношения
+  chat             Chat         @relation(fields: [chat_id], references: [id], onDelete: Cascade)
+  user             User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  replyTo          ChatMessage? @relation("MessageReplies", fields: [reply_to_id], references: [id], onDelete: SetNull)
+  replies          ChatMessage[] @relation("MessageReplies")
+  adds             MessageAdd[]
+  
+  @@map("chat_messages")
+}
+
+model MessageAdd {
+  id          String   @id @default(uuid())
+  chat_id     String
+  message_id  String
+  add_id      String
+  created_at  DateTime @default(now())
+  
+  // Отношения
+  chat        Chat     @relation(fields: [chat_id], references: [id], onDelete: Cascade)
+  message     ChatMessage @relation(fields: [message_id], references: [id], onDelete: Cascade)
+  add         Add      @relation(fields: [add_id], references: [id], onDelete: Cascade)
+  
+  @@unique([message_id, add_id])
+  @@map("message_adds")
+}
+
+model Add {
+  id          String   @id @default(uuid())
+  url         String
+  type        AddType  @default(FILE)
+  filename    String?
+  size        Int?
+  mime_type   String?
+  created_at  DateTime @default(now())
+  
+  // Отношения
+  messageAdds MessageAdd[]
+  
+  @@map("adds")
+}
+
+enum ChatType {
+  PRIVATE
+  GROUP
+  CHANNEL
+}
+
+enum ChatRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  FILE
+  VIDEO
+  AUDIO
+  SYSTEM
+}
+
+enum AddType {
+  IMAGE
+  FILE
+  VIDEO
+  AUDIO
+  DOCUMENT
+  VOICE
+}
