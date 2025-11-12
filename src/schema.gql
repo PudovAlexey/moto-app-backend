@@ -41,15 +41,47 @@ type GetMyContactResponse {
   name: String!
 }
 
+input LoginInput {
+  """email"""
+  email: String!
+
+  """password"""
+  password: String!
+}
+
+type LoginResponse {
+  """access_token"""
+  access_token: String!
+
+  """refresh_token"""
+  refresh_token: String!
+}
+
+type LogoutResponse {
+  """"""
+  detail: String!
+}
+
 type Mutation {
   addToContacts(contact: AddToContactInput!): AddToContactResponse!
   createChat(chat_data: CreateChatInput!): CreateChatResponse!
+  login(input: LoginInput!): LoginResponse!
+  logout: LogoutResponse!
+  refreshAccessToken: RefreshTokenResponse!
   register(input: RegisterInput!): RegisterResponse!
   sendMessage(message_data: SendMessageInput!): SendMessageResponse!
 }
 
 type Query {
   getContact(search: GetMyContactInput!): [GetMyContactResponse!]!
+}
+
+type RefreshTokenResponse {
+  """access_token"""
+  access_token: String!
+
+  """refresh_token"""
+  refresh_token: String!
 }
 
 input RegisterInput {
