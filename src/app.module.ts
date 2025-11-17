@@ -15,7 +15,7 @@ import { RedisModule } from '@nestjs-modules/ioredis';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 
-// TODO Hello world
+//TODO make it later
 
 @Module({
   imports: [
